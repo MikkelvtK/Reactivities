@@ -13,7 +13,7 @@ public class ActivitiesController : ControllerBase
 
     public ActivitiesController(DataContext context)
     {
-            _context = context;
+        _context = context;
     }
 
     [HttpGet]
