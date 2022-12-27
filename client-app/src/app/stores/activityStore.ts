@@ -6,7 +6,6 @@ import { v4 as uuid } from "uuid";
 export default class ActivityStore {
   activityRegistry = new Map<string, Activity>();
   selectedActivity: Activity | undefined;
-  editMode = false;
   loading = false;
   loadingInitialActivities = false;
 
@@ -17,6 +16,16 @@ export default class ActivityStore {
   get activities() {
     const activities = Array.from(this.activityRegistry.values());
     return activities.sort((a, b) => Date.parse(a.date) - Date.parse(b.date));
+  }
+
+  get groupedActivities() {
+    return Object.entries(
+      this.activities.reduce((activities, activity) => {
+        const date = activity.date;
+        activities[date] = activities[date] ? [...activities[date], activity] : [activity];
+        return activities;
+      }, {} as {[key: string]: Activity[]})
+    )
   }
 
   loadActivities = async () => {
