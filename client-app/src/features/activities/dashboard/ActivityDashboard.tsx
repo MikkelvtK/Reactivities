@@ -1,14 +1,18 @@
 import { observer } from "mobx-react-lite";
-import React from "react";
+import { useEffect } from "react";
 import { Grid } from "semantic-ui-react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
-import ActivityDetails from "../details/ActivityDetails";
-import ActivityForm from "../form/ActivitiesForm";
 import ActivityList from "./ActivityList";
 
 function ActivityDashboard() {
   const {activityStore} = useStore();
-  const {selectedActivity, editMode} = activityStore;
+
+  useEffect(() => {
+    if (activityStore.activities.length <= 1) activityStore.loadActivities();
+  }, [activityStore, activityStore.activities.length]);
+
+  if (activityStore.loadingInitialActivities) return <LoadingComponent />;
 
   return (
     <Grid>
@@ -16,10 +20,7 @@ function ActivityDashboard() {
         <ActivityList />
       </Grid.Column>
       <Grid.Column width={6}>
-        {selectedActivity && !editMode &&
-          <ActivityDetails />}
-        {editMode &&
-          <ActivityForm />}
+        <h2>Activity Filters</h2>
       </Grid.Column>
     </Grid>
   )
